@@ -21,7 +21,7 @@ function love.load()
 	player.cooldown = 20
 	player.speed = 2
 	player.image = love.graphics.newImage('images/player.png')
-    	player.fire_sound=love.audio.newSource('sounds/laser.wav')
+	player.fire_sound=love.audio.newSource('sounds/laser.wav', 'static')
 
 	--Section 1.1.1
 	player.fire=function()
