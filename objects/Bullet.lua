@@ -15,4 +15,9 @@ end
 
 function Bullet:draw()
     love.graphics.draw(self.img, self.x, self.y,0, 4, 4)
+    if draw_hitbox then
+        love.graphics.setColor(255,0,0)
+        love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
+        love.graphics.setColor(255,255,255)
+    end
 end

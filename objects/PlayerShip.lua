@@ -1,7 +1,7 @@
 PlayerShip = Ship:extend()
 
-function PlayerShip:new(x, y, width, height, speed, tile, animations)
-    PlayerShip.super.new(self, x, y, width, height, speed, tile, animations)
+function PlayerShip:new(x, y, width, height, x_speed, y_speed, tile, animations)
+    PlayerShip.super.new(self, x, y, width, height, x_speed, y_speed, tile, animations)
     self.bullets = {}
     self.fire_sound = love.audio.newSource('sounds/laser.wav', 'static')
     self.bullet_img = love.graphics.newImage('images/bullet_basic.png')
@@ -19,21 +19,21 @@ end
 function PlayerShip:update(dt)
     PlayerShip.super.update(self, dt)
     if love.keyboard.isDown("right") then
-        self.x = self.x + self.speed * dt
-        self.x_velocity = self.speed
+        self.x = self.x + self.x_speed * dt
+        self.x_velocity = self.x_speed
     elseif love.keyboard.isDown("left") then
-        self.x = self.x - self.speed * dt
-        self.x_velocity = -self.speed
+        self.x = self.x - self.x_speed * dt
+        self.x_velocity = -self.x_speed
     else
         self.x_velocity = 0
     end
 
     if love.keyboard.isDown("up") then
-        self.y_velocity = -self.speed
-        self.y= self.y - self.speed * dt
+        self.y_velocity = -self.y_speed
+        self.y= self.y - self.y_speed * dt
     elseif love.keyboard.isDown("down") then
-        self.y_velocity = self.speed
-        self.y= self.y + self.speed * dt
+        self.y_velocity = self.y_speed
+        self.y= self.y + self.y_speed * dt
     end
 
     for i,b in ipairs(self.bullets) do
@@ -55,5 +55,10 @@ function PlayerShip:draw()
     end
     for _,b in pairs(self.bullets) do
         b:draw()
+    end
+    if draw_hitbox then
+        love.graphics.setColor(255,0,0)
+        love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
+        love.graphics.setColor(255,255,255)
     end
 end
