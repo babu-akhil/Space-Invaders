@@ -1,17 +1,29 @@
 EnemyShip = Ship:extend()
 
-function EnemyShip:new(x, y, width, height, x_speed, y_speed, tile, explode_tile, animations)
-    EnemyShip.super.new(self, x, y, width, height, x_speed, y_speed, tile, animations)
+function EnemyShip:new(x, y, width, height, x_speed, y_speed, tile, explode_tile, animations, cooldown)
+    EnemyShip.super.new(self, x, y, width, height, x_speed, y_speed, tile, animations, 'enemy', explode_tile, cooldown)
     self.x_max = self.x + 100
     self.x_min = math.max(0, self.x - 100)
     self.y_max = love.graphics.getHeight()/2
     self.direction = 1
-    self.explode_tile = explode_tile
-    self.explode_grid = anim8.newGrid(8, 8,self.explode_tile:getWidth(), self.explode_tile:getHeight())
-    self.animations.explode = anim8.newAnimation(self.explode_grid('10-13', 7), 0.1)
-    self.explode = false
-    self.explode_timer = 10
-    self.explode_sound = love.audio.newSource('sounds/Boom15.wav', 'static')
+    self.quick_fire = 3
+end
+
+function EnemyShip:fire()
+    print(self.cooldown)
+    if self.cooldown <= 0 then
+        print('firing')
+        love.audio.play(self.fire_sound)
+        bullet = Bullet(self.x + self.width/2 - bullet_width/2, self.y + self.height + bullet_height/2, bullet_width, bullet_height, -600, self.bullet_img)
+        table.insert(self.bullets, bullet)
+        if self.quick_fire > 0 then
+            self.cooldown = 10
+            self.quick_fire = self.quick_fire - 1
+        else
+            self.cooldown = 40
+            self.quick_fire = 3
+        end
+    end
 end
 
 function EnemyShip:update(dt)
@@ -32,10 +44,7 @@ function EnemyShip:update(dt)
     if self.y < self.y_max then
         self.y = self.y + self.y_speed * dt
     end
-    if self.explode then
-        self.explode_timer = self.explode_timer - 1
-        self.animations.explode:update(dt)
-    end
+    self:fire()
 end
 
 function EnemyShip:draw()
@@ -44,10 +53,5 @@ function EnemyShip:draw()
         self.animations.explode:draw(self.explode_tile, self.x, self.y, 0, 4, 4)
     else
         self.animations.idle:draw(self.tile, self.x, self.y, 0, 4, 4)
-    end
-    if draw_hitbox then
-        love.graphics.setColor(255,0,0)
-        love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
-        love.graphics.setColor(255,255,255)
     end
 end

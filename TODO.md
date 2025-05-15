@@ -1,0 +1,3 @@
+- Allow Enemies to shoot
+- Smarter Enemy movement and attack
+- Different type of attack other than basic bullet
