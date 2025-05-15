@@ -10,6 +10,7 @@ function Bullet:new(x, y, width, height, speed, img)
 end
 
 function Bullet:update(dt)
+    self.y = self.y - self.speed * dt
 end
 
 function Bullet:draw()
