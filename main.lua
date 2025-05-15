@@ -1,9 +1,8 @@
---Simple Space invader game
---tutorial www.youtube.com/
---Author: Mrinal Pande
---Section reference: readme.txt 
+--Author: Akhil Babu (forked from Mrinal Pande's repo)
+--imports
 
---Global Section
+anim8 = require('libraries/anim8')
+
 --min max
 love.graphics.setDefaultFilter('nearest','nearest')
 enemy={}
@@ -13,24 +12,41 @@ enemies_controller.enemies ={}
 --Section 1 
 function love.load()
     
-	--Section 1.1
-	player ={}
-	player.x=0
+	-- global bullet properties
+	bullet_width = 4
+	bullet_height = 8
+	bullet_img = love.graphics.newImage('images/bullet_basic.png')
+
+	-- player properties
+
+	player = {}
+	player.x=10
 	player.y=450
+	player.width = 32
+	player.height = 32
 	player.bullets={}
 	player.cooldown = 20
 	player.speed = 2
-	player.image = love.graphics.newImage('images/player.png')
+	player.tile = love.graphics.newImage('SpaceShooterAssets/SpaceShooterAssetPack_Ships.png')
+	player.grid = anim8.newGrid(8, 8, player.tile:getWidth(), player.tile:getHeight())
+	player.animations = {}
+	player.animations.idle = anim8.newAnimation(player.grid('2-2', 1), 0.1)
+	player.animations.right = anim8.newAnimation(player.grid('3-3', 1), 0.1)
+	player.animations.left = anim8.newAnimation(player.grid('1-1', 1), 0.1)
 	player.fire_sound=love.audio.newSource('sounds/laser.wav', 'static')
+	player.x_velocity = 0
 
 	--Section 1.1.1
 	player.fire=function()
 		if player.cooldown <= 0 then
 		    love.audio.play(player.fire_sound)
-		    player.cooldown=40        
+		    player.cooldown=20
 		    bullet={}
-		    bullet.x= player.x + 90
-		    bullet.y= player.y + 85
+		    bullet.x= player.x + player.width/2 - bullet_width/2
+		    bullet.y= player.y - bullet_height/2
+		    bullet.width = bullet_width
+		    bullet.height = bullet_height
+			bullet.img = bullet_img
 		    table.insert(player.bullets,bullet)
 		end
 	end
@@ -77,13 +93,25 @@ end
 
 --Section 2
 function love.update(dt)
-	player.cooldown= player.cooldown - 0.8
+	player.cooldown= player.cooldown - 1
 
 	--Section 2.1
 	if love.keyboard.isDown("right") then
+		player.x_velocity = player.speed
 		player.x= player.x + player.speed
 	elseif love.keyboard.isDown("left") then
+		player.x_velocity = -player.speed
 		player.x= player.x - player.speed
+	else
+		player.x_velocity = 0
+	end
+
+	if love.keyboard.isDown("up") then
+		player.y_velocity = -player.speed
+		player.y= player.y - player.speed
+	elseif love.keyboard.isDown("down") then
+		player.y_velocity = player.speed
+		player.y= player.y + player.speed
 	end
 
 	if love.keyboard.isDown("space")then
@@ -123,9 +151,18 @@ end
 --Section 4
 function love.draw()
 	--Section 4.1
-	love.graphics.setColor(255,255,255)		
-	love.graphics.draw(player.image, player.x, player.y,0,3)
-	
+	love.graphics.setColor(255,255,255)
+
+	-- draw a rectangle around player
+	love.graphics.rectangle("line", player.x, player.y, player.width, player.height)
+	if player.x_velocity > 0 then
+		player.animations.right:draw(player.tile, player.x, player.y,0, 4, 4)
+	elseif player.x_velocity < 0 then
+		player.animations.left:draw(player.tile, player.x, player.y,0, 4, 4)
+	else
+		player.animations.idle:draw(player.tile, player.x, player.y,0, 4, 4)
+	end
+			
 	--Section 4.2 first is rotation , width height ,skew
 	love.graphics.setColor(255,255,255)
 	for _,e in pairs(enemies_controller.enemies) do
@@ -135,6 +172,6 @@ function love.draw()
 	--Section 4.3
 	love.graphics.setColor(255,255,255)	
 	for _,b in pairs(player.bullets) do
-		love.graphics.rectangle("fill", b.x, b.y, 10, 10)
+		love.graphics.draw(b.img, b.x, b.y,0, 4, 4)
 	end
 end
