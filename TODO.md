@@ -1,4 +1,7 @@
 - ~~Allow Enemies to shoot - DONE~~
+- ~~Menu and Scenes~~
+Have created the basic structure.
+
 - Smarter Enemy movement and attack
 
 The enemy shooting pattern is cool. 4 quick shots and then a longer cooldown. More intelligent movement might be interesting

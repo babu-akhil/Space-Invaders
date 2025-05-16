@@ -7,21 +7,33 @@ end
 function PlayerShip:update(dt)
     PlayerShip.super.update(self, dt)
     if love.keyboard.isDown("right") then
-        self.x = self.x + self.x_speed * dt
-        self.x_velocity = self.x_speed
+        print("right")
+        if self.x + self.width + (self.x_speed * dt) <love.graphics.getWidth() then
+            self.x = self.x + self.x_speed * dt
+            self.x_velocity = self.x_speed
+        end
     elseif love.keyboard.isDown("left") then
-        self.x = self.x - self.x_speed * dt
-        self.x_velocity = -self.x_speed
+        print("left")
+        if self.x - self.x_speed * dt > 0 then
+            self.x = self.x - self.x_speed * dt
+            self.x_velocity = -self.x_speed
+        end
     else
         self.x_velocity = 0
     end
 
     if love.keyboard.isDown("up") then
-        self.y_velocity = -self.y_speed
-        self.y= self.y - self.y_speed * dt
+        print("up")
+        if self.y - self.y_speed * dt > 0 then
+            self.y_velocity = -self.y_speed
+            self.y= self.y - self.y_speed * dt
+        end
     elseif love.keyboard.isDown("down") then
-        self.y_velocity = self.y_speed
-        self.y= self.y + self.y_speed * dt
+        print("down")
+        if self.y + self.height + (self.y_speed * dt) < love.graphics.getHeight() then
+            self.y_velocity = self.y_speed
+            self.y= self.y + self.y_speed * dt
+        end
     end
 
 end
